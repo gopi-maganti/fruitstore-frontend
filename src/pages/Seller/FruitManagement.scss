@@ -1,0 +1,10 @@
+.seller-dashboard {
+  display: flex;
+
+  .main-area {
+    flex: 1;
+    background: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+  }
+}

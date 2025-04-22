@@ -1,0 +1,98 @@
+.fruit-table-wrapper {
+  padding: 2rem;
+  background-color: #f9f9f9;
+
+  .top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      font-size: 1.8rem;
+    }
+  }
+
+  .search-bar {
+    margin: 1rem 0;
+
+    input {
+      width: 250px;
+      padding: 6px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    button {
+      padding: 6px 14px;
+      border-radius: 6px;
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+
+      &:hover {
+        background-color: #555;
+      }
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 1rem;
+
+    .btn {
+      padding: 6px 14px;
+      border-radius: 6px;
+      background-color: #333;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+
+      &:disabled {
+        background-color: #ccc;
+        cursor: not-allowed;
+      }
+
+      &:hover:not(:disabled) {
+        background-color: #555;
+      }
+    }
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 8px;
+    overflow: hidden;
+
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .fruit-thumbnail {
+      width: 40px;
+      height: 40px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+  }
+
+  .pagination-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+  }
+}

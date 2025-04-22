@@ -1,0 +1,122 @@
+.cart {
+    padding: 2rem;
+    background-color: #f4f4f4;
+    min-height: 100vh;
+  
+    h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1.5rem;
+    }
+  
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      background-color: #fff;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  
+      .left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex: 1;
+  
+        img {
+          width: 80px;
+          height: 80px;
+          object-fit: cover;
+          border-radius: 6px;
+        }
+  
+        .info {
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
+  
+          .name {
+            font-weight: bold;
+            margin-bottom: 0.25rem;
+            font-size: 1rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 120px;
+          }
+  
+          .price {
+            font-size: 1rem;
+            color: #333;
+          }
+        }
+      }
+  
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+  
+        button {
+          padding: 0.4rem 0.8rem;
+          font-size: 1rem;
+          border: none;
+          background-color: #4caf50;
+          color: white;
+          border-radius: 4px;
+          cursor: pointer;
+  
+          &:hover {
+            background-color: #388e3c;
+          }
+  
+          &.remove {
+            background-color: #f44336;
+  
+            &:hover {
+              background-color: #d32f2f;
+            }
+          }
+        }
+  
+        span {
+          min-width: 20px;
+          text-align: center;
+          font-weight: 500;
+        }
+      }
+    }
+  
+    .cart-total {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-top: 1.5rem;
+    }
+  
+    .checkout-btn,
+    .continue-btn {
+      margin-top: 1rem;
+      padding: 0.6rem 1.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+  
+      &:hover {
+        background-color: #43a047;
+      }
+    }
+  
+    .continue-btn {
+      background-color: #1976d2;
+  
+      &:hover {
+        background-color: #125ea9;
+      }
+    }
+  }

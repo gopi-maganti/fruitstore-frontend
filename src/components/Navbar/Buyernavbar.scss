@@ -1,0 +1,100 @@
+.buyer-navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.5rem;
+    background-color: #131921;
+    color: white;
+  
+    .site-title a {
+      font-size: 1.4rem;
+      font-weight: bold;
+      color: white;
+      text-decoration: none;
+    }
+  
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+  
+      .cart-icon {
+        position: relative;
+  
+        img {
+          height: 28px;
+        }
+  
+        .cart-count {
+          position: absolute;
+          top: -8px;
+          right: -10px;
+          background: orange;
+          color: black;
+          border-radius: 50%;
+          padding: 2px 6px;
+          font-size: 0.75rem;
+          font-weight: bold;
+        }
+      }
+  
+      .user-icon img {
+        height: 28px;
+      }
+    }
+    .cart-wrapper {
+        position: relative;
+      
+        .cart-dropdown {
+          position: absolute;
+          right: 0;
+          top: 110%;
+          width: 250px;
+          background: #fff;
+          box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+          border-radius: 6px;
+          padding: 1rem;
+          z-index: 20;
+      
+          .dropdown-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+      
+            img {
+              width: 40px;
+              height: 40px;
+              object-fit: cover;
+              border-radius: 4px;
+              margin-right: 0.75rem;
+            }
+      
+            .info {
+              p {
+                margin: 0;
+                font-weight: 600;
+                color: #131921;
+              }
+              span {
+                font-size: 0.85rem;
+                color: #555;
+              }
+            }
+          }
+      
+          .view-cart-link {
+            display: block;
+            text-align: center;
+            margin-top: 0.5rem;
+            font-weight: bold;
+            color: #0073e6;
+            text-decoration: none;
+      
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+      
+  }
