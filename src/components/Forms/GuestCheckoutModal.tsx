@@ -1,7 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import "./GuestCheckoutModal.scss";
-import { useCart } from "../../context/CartContext";
+import { UseCart } from "../../context/CartContext";
 
 const GuestCheckoutModal = ({ onClose }: { onClose: () => void }) => {
   const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ const GuestCheckoutModal = ({ onClose }: { onClose: () => void }) => {
   });
   const [success, setSuccess] = useState(false);
   const [orderDetails, setOrderDetails] = useState<any>(null);
-  const { clearCart } = useCart();
+  const { clearCart } = UseCart();
 
   const handleSubmit = async () => {
     try {

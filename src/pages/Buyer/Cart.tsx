@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import "./Cart.scss";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import GuestCheckoutModal from "../../components/Forms/GuestCheckoutModal";
 
 const Cart = () => {
@@ -22,20 +21,28 @@ const Cart = () => {
     );
     localStorage.setItem("fruitstore_cart", JSON.stringify(updated));
     setCartItems(updated);
-    toast.info("Quantity updated!");
   };
 
   const removeItem = (id: number) => {
     const updated = cartItems.filter((item) => item.fruit_id !== id);
     localStorage.setItem("fruitstore_cart", JSON.stringify(updated));
     setCartItems(updated);
-    toast.error("Item removed from cart!");
   };
 
   const total = cartItems.reduce(
     (acc, item) => acc + item.price * item.quantity,
     0
   );
+
+  const setQuantity = (quantity: number) => {
+    const updated = cartItems.map((item) =>
+      item.fruit_id === item.fruit_id
+        ? { ...item, quantity: Math.max(1, quantity) }
+        : item
+    );
+    localStorage.setItem("fruitstore_cart", JSON.stringify(updated));
+    setCartItems(updated);
+  };
 
   return (
     <div className="cart">
@@ -78,7 +85,17 @@ const Cart = () => {
                 <button onClick={() => updateQuantity(item.fruit_id, -1)}>
                   -
                 </button>
-                <span>{item.quantity}</span>
+                <input
+                  type="number"
+                  value={item.quantity}
+                  min={1}
+                  onChange={(e) => {
+                    const val = parseInt(e.target.value);
+                    if (!isNaN(val)) {
+                      setQuantity(Math.min(item.available_quantity, val));
+                    }
+                  }}
+                />
                 <button onClick={() => updateQuantity(item.fruit_id, 1)}>
                   +
                 </button>

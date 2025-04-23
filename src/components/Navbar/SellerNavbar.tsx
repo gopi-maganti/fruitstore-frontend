@@ -6,7 +6,7 @@ const SellerNavbar = () => {
   return (
     <nav className="seller-navbar">
       <HamburgerMenu />
-      <div className="site-title">Fruit Basket - Seller</div>
+      <div className="site-title">Fruit Store - Seller</div>
       <div className="profile-icon">
         <img src={UserIcon} alt="User" />
       </div>

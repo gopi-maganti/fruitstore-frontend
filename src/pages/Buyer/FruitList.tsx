@@ -1,7 +1,7 @@
 // File: src/pages/FruitList.tsx
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { useCart } from "../../context/CartContext";
+import { UseCart } from "../../context/CartContext";
 import { Fruit } from "../../models/FruitManagement";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -12,7 +12,7 @@ const FruitList = () => {
   const [fruits, setFruits] = useState<Fruit[]>([]);
   const [selectedFruit, setSelectedFruit] = useState<Fruit | null>(null);
   const [quantity, setQuantity] = useState(1);
-  const { cart, setCart } = useCart();
+  const { cart, setCart } = UseCart();
 
   useEffect(() => {
     fetch("http://localhost:5000/fruit/")
@@ -43,6 +43,7 @@ const FruitList = () => {
           image_url: fruit.image_url,
           quantity: qty,
           info_id: fruit.info_id,
+          available_quantity: fruit.available_quantity,
         },
       ];
     }
@@ -76,6 +77,7 @@ const FruitList = () => {
               <p className="availability">
                 Available: {fruit.available_quantity}
               </p>
+              <button onClick={(e) => { e.stopPropagation(); addToCart(fruit, 1); }}>Add to Cart</button>
             </div>
           ))}
         </div>
@@ -96,9 +98,17 @@ const FruitList = () => {
                 src={`http://localhost:5000${selectedFruit.image_url}`}
                 alt={selectedFruit.name}
               />
-              <h2>{selectedFruit.name}</h2>
-              <p>Price: ${selectedFruit.price}</p>
-              <p>Available: {selectedFruit.available_quantity}</p>
+              <h2>{selectedFruit.name.toUpperCase()}</h2>
+              <p>{selectedFruit.description}</p>
+              <span className="fruit-info">
+                <p>Seeds: {selectedFruit.has_seeds}</p>
+                <p>Color: {selectedFruit.color}</p>
+                <p>Size: {selectedFruit.size}</p>
+              </span>
+              <span className="fruit-price-availability">
+                <p>Price: ${selectedFruit.price}</p>
+                <p>Available: {selectedFruit.available_quantity}</p>
+              </span>
 
               <div className="quantity-controls">
                 <button onClick={() => setQuantity((q) => Math.max(1, q - 1))}>

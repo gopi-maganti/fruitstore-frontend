@@ -87,7 +87,7 @@ const FruitTable = () => {
   return (
     <div className="fruit-table-wrapper">
       <div className="top-bar">
-        <h2>Fruit Management</h2>
+        <h1>Fruit Management</h1>
       </div>
 
       <div className="search-bar">

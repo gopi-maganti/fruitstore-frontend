@@ -1,18 +1,37 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { CartItem, CartContextType } from "../models/CartManagement";
+import type { CartItem, CartContextType } from "../models/CartManagement";
 
 const CartContext = createContext<CartContextType>({
   cart: [],
   setCart: () => {},
-  clearCart: () => {}, // Add this
+  clearCart: () => {},
 });
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   const [cart, setCart] = useState<CartItem[]>([]);
 
   useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("fruitstore_cart") || "[]");
-    setCart(stored);
+    const syncCart = () => {
+      try {
+        const storedCart = JSON.parse(
+          localStorage.getItem("fruitstore_cart") || "[]"
+        );
+
+        // 🔁 Force update even if content is same by reference
+        setCart([...storedCart]);
+      } catch (error) {
+        console.error("Failed to sync cart from localStorage", error);
+        setCart([]);
+      }
+    };
+
+    // 🔄 Sync on back navigation or tab restore
+    window.addEventListener("pageshow", syncCart);
+
+    // 🔄 Initial mount as well
+    syncCart();
+
+    return () => window.removeEventListener("pageshow", syncCart);
   }, []);
 
   useEffect(() => {
@@ -31,4 +50,4 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
   );
 };
 
-export const useCart = () => useContext(CartContext);
+export const UseCart = () => useContext(CartContext);

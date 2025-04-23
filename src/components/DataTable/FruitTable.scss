@@ -6,8 +6,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    text-align: center;
 
-    h2 {
+    h1 {
       font-size: 1.8rem;
     }
   }
@@ -16,15 +17,15 @@
     margin: 1rem 0;
 
     input {
-      width: 250px;
+      width: 400px;
       padding: 6px 10px;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: 30px;
     }
 
     button {
       padding: 6px 14px;
-      border-radius: 6px;
+      border-radius: 30px;
       background-color: #333;
       color: white;
       border: none;
@@ -44,7 +45,7 @@
 
     .btn {
       padding: 6px 14px;
-      border-radius: 6px;
+      border-radius: 50px;
       background-color: #333;
       color: white;
       border: none;
@@ -95,4 +96,5 @@
     align-items: center;
     margin-top: 1rem;
   }
+  
 }

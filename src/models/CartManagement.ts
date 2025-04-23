@@ -5,6 +5,7 @@ export interface CartItem {
     price: number;
     quantity: number;
     image_url: string;
+    available_quantity: number;
   }
 
 export interface CartContextType {

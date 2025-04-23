@@ -1,19 +1,53 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import userIcon from "../../assets/Navbar/user-icon-white.svg";
 import cartIcon from "../../assets/Navbar/cart-icon.svg";
 import "./BuyerNavbar.scss";
-import { useCart } from "../../context/CartContext";
+import { UseCart } from "../../context/CartContext";
 
 const BuyerNavbar = () => {
-  const { cart } = useCart();
-  const uniqueItemCount = cart.length;
+  const { cart, setCart } = UseCart();
   const [showDropdown, setShowDropdown] = useState(false);
+  const uniqueItemCount = cart.length;
+
+  // 🔄 Ensure cart is synced on mount
+  useEffect(() => {
+    const storedCart = JSON.parse(
+      localStorage.getItem("fruitstore_cart") || "[]"
+    );
+    setCart(storedCart);
+  }, []);
+
+  const updateQuantity = (fruitId: number, delta: number) => {
+    const updated = cart.map((item) =>
+      item.fruit_id === fruitId
+        ? { ...item, quantity: Math.max(1, item.quantity + delta) }
+        : item
+    );
+    localStorage.setItem("fruitstore_cart", JSON.stringify(updated));
+    setCart(updated);
+  };
+
+  const setQuantity = (fruitId: number, quantity: number) => {
+    const updated = cart.map((item) =>
+      item.fruit_id === fruitId
+        ? { ...item, quantity: Math.max(1, quantity) }
+        : item
+    );
+    localStorage.setItem("fruitstore_cart", JSON.stringify(updated));
+    setCart(updated);
+  };
+
+  const removeItem = (fruitId: number) => {
+    const updated = cart.filter((item) => item.fruit_id !== fruitId);
+    localStorage.setItem("fruitstore_cart", JSON.stringify(updated));
+    setCart(updated);
+  };
 
   return (
     <nav className="buyer-navbar">
       <div className="site-title">
-        <Link to="/">FruitStore</Link>
+        <Link to="/buyer/">Fruit Store</Link>
       </div>
 
       <div className="nav-links">
@@ -29,23 +63,61 @@ const BuyerNavbar = () => {
             )}
           </Link>
 
-          {showDropdown && cart.length > 0 && (
+          {showDropdown && (
             <div className="cart-dropdown">
-              {cart.map((item) => (
-                <div key={item.fruit_id} className="dropdown-item">
-                  <img
-                    src={`http://localhost:5000${item.image_url}`}
-                    alt={item.name}
-                  />
-                  <div className="info">
-                    <p title={item.name}>{item.name}</p>
-                    <span>Qty: {item.quantity}</span>
-                  </div>
-                </div>
-              ))}
-              <Link to="/cart" className="view-cart-link">
-                View Cart
-              </Link>
+              {cart.length === 0 ? (
+                <p className="empty-msg">Your cart is empty.</p>
+              ) : (
+                <>
+                  {cart.map((item) => (
+                    <div key={item.fruit_id} className="dropdown-item">
+                      <img
+                        src={`http://localhost:5000${item.image_url}`}
+                        alt={item.name}
+                      />
+                      <div className="info">
+                        <p title={item.name}>{item.name}</p>
+
+                        <div className="quantity-controls">
+                          <button
+                            onClick={() => updateQuantity(item.fruit_id, -1)}
+                          >
+                            -
+                          </button>
+                          <input
+                            type="number"
+                            value={item.quantity}
+                            min={1}
+                            onChange={(e) => {
+                              const val = parseInt(e.target.value);
+                              if (!isNaN(val)) {
+                                setQuantity(
+                                  item.fruit_id,
+                                  Math.min(item.available_quantity, val)
+                                );
+                              }
+                            }}
+                          />
+                          <button
+                            onClick={() => updateQuantity(item.fruit_id, 1)}
+                          >
+                            +
+                          </button>
+                          <button
+                            className="remove"
+                            onClick={() => removeItem(item.fruit_id)}
+                          >
+                            🗑
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <Link to="/cart" className="view-cart-link">
+                    View Cart
+                  </Link>
+                </>
+              )}
             </div>
           )}
         </div>
