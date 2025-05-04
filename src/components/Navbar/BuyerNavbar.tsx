@@ -1,22 +1,27 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
+import { UseCart } from "../../context/CartContext";
 import userIcon from "../../assets/Navbar/user-icon-white.svg";
 import cartIcon from "../../assets/Navbar/cart-icon.svg";
 import "./BuyerNavbar.scss";
-import { UseCart } from "../../context/CartContext";
 
 const BuyerNavbar = () => {
   const { cart, setCart } = UseCart();
   const [showDropdown, setShowDropdown] = useState(false);
   const uniqueItemCount = cart.length;
 
-  // 🔄 Ensure cart is synced on mount
+  // Always sync cart from localStorage when dropdown opens
   useEffect(() => {
-    const storedCart = JSON.parse(
-      localStorage.getItem("fruitstore_cart") || "[]"
-    );
-    setCart(storedCart);
-  }, []);
+    if (showDropdown) {
+      const stored = localStorage.getItem("fruitstore_cart");
+      if (stored) {
+        setCart(JSON.parse(stored));
+      } else {
+        setCart([]);
+      }
+    }
+  }, [showDropdown, setCart]);
 
   const updateQuantity = (fruitId: number, delta: number) => {
     const updated = cart.map((item) =>

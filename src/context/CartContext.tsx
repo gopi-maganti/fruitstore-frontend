@@ -8,38 +8,53 @@ const CartContext = createContext<CartContextType>({
 });
 
 export const CartProvider = ({ children }: { children: React.ReactNode }) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCartState] = useState<CartItem[]>(() => {
+    try {
+      const stored = localStorage.getItem("fruitstore_cart");
+      return stored ? JSON.parse(stored) : [];
+    } catch (err) {
+      console.error("Failed to load cart from localStorage", err);
+      return [];
+    }
+  });
 
   useEffect(() => {
-    const syncCart = () => {
-      try {
-        const storedCart = JSON.parse(
-          localStorage.getItem("fruitstore_cart") || "[]"
-        );
+    try {
+      if (cart.length > 0) {
+        localStorage.setItem("fruitstore_cart", JSON.stringify(cart));
+      } else {
+        localStorage.removeItem("fruitstore_cart");
+      }
+    } catch (err) {
+      console.error("Failed to update cart in localStorage", err);
+    }
+  }, [cart]);
 
-        // 🔁 Force update even if content is same by reference
-        setCart([...storedCart]);
-      } catch (error) {
-        console.error("Failed to sync cart from localStorage", error);
-        setCart([]);
+  useEffect(() => {
+    const handlePageShow = () => {
+      try {
+        const stored = localStorage.getItem("fruitstore_cart");
+        const parsed = stored ? JSON.parse(stored) : [];
+        setCartState(parsed);
+      } catch (err) {
+        console.error("Failed to resync cart from localStorage", err);
       }
     };
 
-    // 🔄 Sync on back navigation or tab restore
-    window.addEventListener("pageshow", syncCart);
-
-    // 🔄 Initial mount as well
-    syncCart();
-
-    return () => window.removeEventListener("pageshow", syncCart);
+    window.addEventListener("pageshow", handlePageShow);
+    return () => window.removeEventListener("pageshow", handlePageShow);
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("fruitstore_cart", JSON.stringify(cart));
-  }, [cart]);
+  const setCart = (items: CartItem[]) => {
+    setCartState((prev) => {
+      const prevStr = JSON.stringify(prev);
+      const newStr = JSON.stringify(items);
+      return prevStr !== newStr ? [...items] : prev;
+    });
+  };
 
   const clearCart = () => {
-    setCart([]);
+    setCartState([]);
     localStorage.removeItem("fruitstore_cart");
   };
 

@@ -5,12 +5,14 @@ import GuestCheckoutModal from "../../components/Forms/GuestCheckoutModal";
 
 const Cart = () => {
   const [cartItems, setCartItems] = useState<any[]>([]);
+  const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     const items = JSON.parse(localStorage.getItem("fruitstore_cart") || "[]");
     setCartItems(items);
+    setSelectedItems(items.map((item: any) => item.fruit_id)); // default: all selected
   }, []);
 
   const updateQuantity = (id: number, delta: number) => {
@@ -27,22 +29,35 @@ const Cart = () => {
     const updated = cartItems.filter((item) => item.fruit_id !== id);
     localStorage.setItem("fruitstore_cart", JSON.stringify(updated));
     setCartItems(updated);
+    setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
   };
 
-  const total = cartItems.reduce(
-    (acc, item) => acc + item.price * item.quantity,
-    0
-  );
-
-  const setQuantity = (quantity: number) => {
+  const setQuantity = (quantity: number, id: number) => {
     const updated = cartItems.map((item) =>
-      item.fruit_id === item.fruit_id
-        ? { ...item, quantity: Math.max(1, quantity) }
-        : item
+      item.fruit_id === id ? { ...item, quantity: Math.max(1, quantity) } : item
     );
     localStorage.setItem("fruitstore_cart", JSON.stringify(updated));
     setCartItems(updated);
   };
+
+  const handleCheckbox = (id: number) => {
+    setSelectedItems((prev) =>
+      prev.includes(id) ? prev.filter((itemId) => itemId !== id) : [...prev, id]
+    );
+  };
+
+  const handleClearCart = () => {
+    localStorage.removeItem("fruitstore_cart");
+    setCartItems([]);
+    setSelectedItems([]);
+  };
+
+  const total = cartItems.reduce((acc, item) => {
+    if (selectedItems.includes(item.fruit_id)) {
+      return acc + item.price * item.quantity;
+    }
+    return acc;
+  }, 0);
 
   return (
     <div className="cart">
@@ -60,21 +75,17 @@ const Cart = () => {
           {cartItems.map((item) => (
             <div key={item.fruit_id} className="cart-item">
               <div className="left">
+                <input
+                  type="checkbox"
+                  checked={selectedItems.includes(item.fruit_id)}
+                  onChange={() => handleCheckbox(item.fruit_id)}
+                />
                 <img
                   src={`http://localhost:5000${item.image_url}`}
                   alt={item.name}
                 />
                 <div className="info">
-                  <div
-                    className="name"
-                    title={item.name}
-                    style={{
-                      maxWidth: "100%",
-                      fontSize: "1rem",
-                      fontWeight: "600",
-                      whiteSpace: "normal",
-                    }}
-                  >
+                  <div className="name" title={item.name}>
                     {item.name}
                   </div>
                   <div className="price">${item.price}</div>
@@ -92,7 +103,10 @@ const Cart = () => {
                   onChange={(e) => {
                     const val = parseInt(e.target.value);
                     if (!isNaN(val)) {
-                      setQuantity(Math.min(item.available_quantity, val));
+                      setQuantity(
+                        Math.min(item.available_quantity, val),
+                        item.fruit_id
+                      );
                     }
                   }}
                 />
@@ -110,11 +124,19 @@ const Cart = () => {
           ))}
 
           <div className="cart-total">Total: ${total.toFixed(2)}</div>
-          <button onClick={() => setShowModal(true)}>
+          <button
+            disabled={selectedItems.length === 0}
+            onClick={() => setShowModal(true)}
+          >
             Proceed to Checkout
           </button>
+
           {showModal && (
-            <GuestCheckoutModal onClose={() => setShowModal(false)} />
+            <GuestCheckoutModal
+              onClose={() => setShowModal(false)}
+              selectedCartIds={selectedItems}
+              onSuccess={handleClearCart}
+            />
           )}
         </>
       )}

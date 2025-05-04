@@ -33,11 +33,11 @@ const OrdersTable: React.FC = () => {
               <strong>Order ID:</strong> {group.parent_order_id}
             </span>
             <span>
-              <strong>User:</strong> {group.user_name}
-            </span>
-            <span>
               <strong>Date:</strong>{" "}
               {new Date(group.order_date).toLocaleString()}
+            </span>
+            <span>
+              <strong>Order Total: </strong> ${group.orders.reduce((sum, item) => sum + (item.total_price ?? item.quantity * (item.price ?? 0)), 0).toFixed(2)}
             </span>
           </div>
 

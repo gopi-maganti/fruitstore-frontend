@@ -32,3 +32,8 @@ export interface OrderItem {
     }[];
   }
   
+export interface GuestCheckoutModalProps {
+  onClose: () => void;
+  selectedCartIds: number[];
+  onSuccess?: () => void; // Added onSuccess prop
+}

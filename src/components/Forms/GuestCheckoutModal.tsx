@@ -3,7 +3,17 @@ import axios from "axios";
 import "./GuestCheckoutModal.scss";
 import { UseCart } from "../../context/CartContext";
 
-const GuestCheckoutModal = ({ onClose }: { onClose: () => void }) => {
+type GuestCheckoutModalProps = {
+  onClose: () => void;
+  selectedCartIds: number[];
+  onSuccess?: () => void;
+};
+
+const GuestCheckoutModal = ({
+  onClose,
+  selectedCartIds,
+  onSuccess,
+}: GuestCheckoutModalProps) => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -14,19 +24,32 @@ const GuestCheckoutModal = ({ onClose }: { onClose: () => void }) => {
   const { clearCart } = UseCart();
 
   const handleSubmit = async () => {
+    if (!formData.name || !formData.email || !formData.phone_number) {
+      alert("Please fill all fields before submitting.");
+      return;
+    }
+
     try {
       const cart = JSON.parse(localStorage.getItem("fruitstore_cart") || "[]");
+      const selectedItems = cart.filter((item: any) =>
+        selectedCartIds.includes(item.fruit_id)
+      );
 
+      // Create guest user (ignore if already exists)
       try {
         await axios.post("http://localhost:5000/user/add", formData);
       } catch (error: any) {
-        if (!error?.response?.data?.message?.includes("already exists")) {
+        if (
+          !error?.response?.data?.message?.includes("already exists") &&
+          error?.response?.status !== 409
+        ) {
           throw error;
         }
       }
 
+      // Add selected cart items for guest (user_id: -1)
       await Promise.all(
-        cart.map((item: any) =>
+        selectedItems.map((item: any) =>
           axios.post("http://localhost:5000/cart/add", {
             user_id: -1,
             fruit_id: item.fruit_id,
@@ -35,12 +58,14 @@ const GuestCheckoutModal = ({ onClose }: { onClose: () => void }) => {
         )
       );
 
+      // Create order for guest
       const orderRes = await axios.post("http://localhost:5000/order/add/-1", {
         guest_info: formData,
+        cart_ids: selectedCartIds,
       });
 
-      clearCart(); // clear localStorage + React state
-
+      clearCart(); // Clear context/localStorage
+      if (onSuccess) onSuccess(); // Notify Cart to clear UI state
       setOrderDetails(orderRes.data);
       setSuccess(true);
     } catch (error) {
