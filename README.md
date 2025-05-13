@@ -1,54 +1,127 @@
-# React + TypeScript + Vite
+# 🍓 Fruit Store - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the **frontend** for the 🛒 Fruit Store web app — a responsive online platform where users can browse, manage, and buy fruits. Built using **React + Vite + TypeScript**, it includes a full guest checkout flow, seller dashboard, and Docker integration for containerized deployments.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## Expanding the ESLint configuration
+- ✅ Buyer and Seller views
+- 🛒 Cart and Guest Checkout
+- 📦 Add, Clone, Edit & Delete fruits
+- ✏️ Bulk edit with inline validation
+- 🔍 Search, Pagination, and Filter
+- 📥 Receipt download post-order
+- 🔒 LocalStorage-based cart state
+- 🧪 Unit tests + Code coverage
+- 🐳 Dockerized for easy deployment
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+## 🛠️ Tech Stack
+
+- **React** + **TypeScript**
+- **Vite** for fast dev builds
+- **Axios** for API communication
+- **SCSS Modules** for styling
+- **React Toastify** for notifications
+- **Vitest** + **Testing Library** for testing
+- **Docker** for containerization
+
+---
+
+## 📁 Folder Structure
+
+src/
+├── components/ # Reusable components (modals, navbars, tables)
+├── context/ # Cart context
+├── models/ # TypeScript models
+├── pages/ # Route-level pages
+├── App.tsx
+├── main.tsx
+tests/ # Unit test files
+Dockerfile
+vite.config.ts
+
+yaml
+Copy
+Edit
+
+---
+
+## 📦 Getting Started (Dev)
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/fruitstore-frontend.git
+cd fruitstore-frontend
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Install dependencies
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm install
 ```
+
+### 3. Start development server
+
+```bash
+npm run dev
+```
+
+Open: http://localhost:5173
+
+⚠️ Make sure your backend API is running at http://localhost:5000
+
+### 🧪 Run Tests & Coverage
+
+```bash
+npm run test # Run all unit tests
+npm run test -- --coverage # Generate test coverage
+```
+
+To view the coverage report in browser:
+
+```bash
+open coverage/index.html # macOS
+start coverage/index.html # Windows
+```
+
+### 🐳 Docker Setup
+
+### 📌 Build Docker Image
+
+```bash
+docker build -t fruitstore-frontend .
+```
+
+### ▶️ Run the Container
+
+```bash
+docker run -p 5173:5173 fruitstore-frontend
+```
+
+This will expose your app at: http://localhost:5173
+
+If you're using a proxy, ensure CORS and ports are aligned with your backend (http://localhost:5000)
+
+### ⚙️ Optional: Docker Compose
+
+If you’re running both frontend and backend, you can include this in a docker-compose.yml:
+
+```yaml
+services:
+frontend:
+build: .
+ports: - "5173:5173"
+depends_on: - backend
+```
+
+### 📄 License
+
+MIT © 2025 Gopi Krishna Maganti
+
+### 🙌 Acknowledgments
+
+This app was built as part of a full-stack fruit e-commerce project with complete local and container-based deployment support.

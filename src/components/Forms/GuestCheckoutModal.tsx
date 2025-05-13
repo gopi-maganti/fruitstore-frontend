@@ -29,10 +29,16 @@ const GuestCheckoutModal = ({
       return;
     }
 
+    if (!formData.name.trim()) return alert("Name is required");
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) return alert("Invalid email");
+    if (!/^\d{10}$/.test(formData.phone_number))
+      return alert("Phone must be 10 digits");
+
     try {
       const cart = JSON.parse(localStorage.getItem("fruitstore_cart") || "[]");
+      const currentCartIds = cart.map((item: any) => item.fruit_id);
       const selectedItems = cart.filter((item: any) =>
-        selectedCartIds.includes(item.fruit_id)
+        currentCartIds.includes(item.fruit_id)
       );
 
       // Create guest user (ignore if already exists)
@@ -61,11 +67,11 @@ const GuestCheckoutModal = ({
       // Create order for guest
       const orderRes = await axios.post("http://localhost:5000/order/add/-1", {
         guest_info: formData,
-        cart_ids: selectedCartIds,
+        cart_ids: currentCartIds,
       });
 
-      clearCart(); // Clear context/localStorage
-      if (onSuccess) onSuccess(); // Notify Cart to clear UI state
+      clearCart();
+      if (onSuccess) onSuccess();
       setOrderDetails(orderRes.data);
       setSuccess(true);
     } catch (error) {
@@ -95,65 +101,72 @@ const GuestCheckoutModal = ({
     link.click();
   };
 
-  if (success && orderDetails) {
-    return (
-      <div className="guest-modal-backdrop" onClick={onClose}>
-        <div className="guest-modal" onClick={(e) => e.stopPropagation()}>
-          <h2>Order Placed Successfully!</h2>
-          <p>
-            <strong>Order ID:</strong> {orderDetails.order_id}
-          </p>
-          <p>
-            <strong>Date:</strong>{" "}
-            {new Date(orderDetails.order_date).toLocaleString()}
-          </p>
-          <p>
-            <strong>Total:</strong> ${orderDetails.total_order_price}
-          </p>
-          <h3>Items:</h3>
-          <ul>
-            {orderDetails.items.map((item: any, idx: number) => (
-              <li key={idx}>
-                {item.fruit_name} - Qty: {item.quantity} @ $
-                {item.price_by_fruit} = ${item.total_price}
-              </li>
-            ))}
-          </ul>
-          <button className="submit-btn" onClick={downloadReceipt}>
-            Download Receipt
-          </button>
-          <button className="close-btn" onClick={onClose}>
-            Close
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="guest-modal-backdrop" onClick={onClose}>
+    <div
+      className="guest-modal-backdrop"
+      onClick={() => {
+        if (!success) onClose();
+      }}
+    >
       <div className="guest-modal" onClick={(e) => e.stopPropagation()}>
-        <h2>Guest Checkout</h2>
-        <input
-          placeholder="Name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        />
-        <input
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-        />
-        <input
-          placeholder="Phone Number"
-          value={formData.phone_number}
-          onChange={(e) =>
-            setFormData({ ...formData, phone_number: e.target.value })
-          }
-        />
-        <button className="submit-btn" onClick={handleSubmit}>
-          Submit Order
-        </button>
+        {success && orderDetails ? (
+          <>
+            <h2>Order Placed Successfully!</h2>
+            <p>
+              <strong>Order ID:</strong> {orderDetails.order_id}
+            </p>
+            <p>
+              <strong>Date:</strong>{" "}
+              {new Date(orderDetails.order_date).toLocaleString()}
+            </p>
+            <p>
+              <strong>Total:</strong> ${orderDetails.total_order_price}
+            </p>
+            <h3>Items:</h3>
+            <ul>
+              {orderDetails.items.map((item: any, idx: number) => (
+                <li key={idx}>
+                  {item.fruit_name} - Qty: {item.quantity} @ $
+                  {item.price_by_fruit} = ${item.total_price}
+                </li>
+              ))}
+            </ul>
+            <button className="submit-btn" onClick={downloadReceipt}>
+              Download Receipt
+            </button>
+            <button className="close-btn" onClick={onClose}>
+              Close
+            </button>
+          </>
+        ) : (
+          <>
+            <h2>Guest Checkout</h2>
+            <input
+              placeholder="Name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+            />
+            <input
+              placeholder="Email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+            />
+            <input
+              placeholder="Phone Number"
+              value={formData.phone_number}
+              onChange={(e) =>
+                setFormData({ ...formData, phone_number: e.target.value })
+              }
+            />
+            <button className="submit-btn" onClick={handleSubmit}>
+              Submit Order
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

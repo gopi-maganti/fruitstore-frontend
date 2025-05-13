@@ -84,29 +84,31 @@ const FruitModal: React.FC<FruitModalProps> = ({
       }
     });
 
+    const isEdit = initialData?.fruit_id != null;
+
+    const url = isEdit
+      ? `http://localhost:5000/fruit/${initialData.fruit_id}`
+      : "http://localhost:5000/fruit/add";
+    const method = isEdit ? "PUT" : "POST";
+
     try {
-      const isEdit = initialData?.fruit_id != null;
-
-      const url = isEdit
-        ? `http://localhost:5000/fruit/${initialData.fruit_id}`
-        : "http://localhost:5000/fruit/add";
-
-      const method = isEdit ? "PUT" : "POST";
-
       const res = await fetch(url, {
         method,
         body: formData,
       });
+
+      const data = await res.json();
+
 
       if (res.ok) {
         toast.success(`✅ Fruit ${isEdit ? "updated" : "added"} successfully!`);
         onSubmit();
         onClose();
       } else {
-        const err = await res.json();
-        toast.error(`❌ ${err.error || "Something went wrong"}`);
+        toast.error(`❌ ${data.error || "Something went wrong"}`);
       }
     } catch (error) {
+      console.error("❌ Network error", error);
       toast.error("❌ Network error. Please try again.");
     }
   };
@@ -212,6 +214,7 @@ const FruitModal: React.FC<FruitModalProps> = ({
 
           <div className="checkbox-group">
             <input
+              id="has_seeds"
               name="has_seeds"
               type="checkbox"
               checked={form.has_seeds}
